@@ -59,6 +59,14 @@ async function createUser(request, response, next) {
       );
     }
 
+    const existingUser = await usersService.getUserByEmail(email);
+    if (existingUser) {
+      return response.status(409).json({
+        message: 'EMAIL_ALREADY_TAKEN'
+      });
+    }
+
+
     return response.status(200).json({ name, email });
   } catch (error) {
     return next(error);
