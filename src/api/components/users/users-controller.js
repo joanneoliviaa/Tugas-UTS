@@ -51,6 +51,13 @@ async function createUser(request, response, next) {
     const email = request.body.email;
     const password = request.body.password;
 
+    const emailExisted = await usersService.emailExist(email);
+    if(emailExisted){
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,'Email already taken'
+      );
+    }
+
     const success = await usersService.createUser(name, email, password);
     if (!success) {
       throw errorResponder(
@@ -58,14 +65,6 @@ async function createUser(request, response, next) {
         'Failed to create user'
       );
     }
-
-    const existingUser = await usersService.getUserByEmail(email);
-    if (existingUser) {
-      return response.status(409).json({
-        message: 'EMAIL_ALREADY_TAKEN'
-      });
-    }
-
 
     return response.status(200).json({ name, email });
   } catch (error) {
