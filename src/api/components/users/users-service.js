@@ -1,5 +1,6 @@
 const usersRepository = require('./users-repository');
 const { hashPassword } = require('../../../utils/password');
+const { errorResponder, errorTypes } = require('../../../core/errors');
 
 /**
  * Get list of users
