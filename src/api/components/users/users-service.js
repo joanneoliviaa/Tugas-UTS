@@ -47,6 +47,7 @@ async function getUser(id) {
  * @param {string} name - Name
  * @param {string} email - Email
  * @param {string} password - Password
+ * @param {string} confirm_password - Confirm Password
  * @returns {boolean}
  */
 async function createUser(name, email, password) {
