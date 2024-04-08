@@ -64,6 +64,49 @@ async function createUser(name, email, password) {
 }
 
 /**
+ * Change Password
+ * @param {string} id - ID
+ * @param {string} old_password - Old password
+ * @param {string} new_password - New password
+ * @param {string} confirm_password - Confirm new password
+ * @return {object}
+ */
+
+async function changePassword(id, old_password, new_password, confirm_password) {
+  try {
+    const user = await usersRepository.getUser(id);
+    if (!user) {
+      return null; 
+    }
+
+    // Check if the old password matches the password stored in the database
+    const passwordMatch = await usersRepository.passwordMatched(old_password, user.password);
+    if (!passwordMatch) {
+      return null; 
+    }
+
+    // Check if the new password and confirm password match
+    if (new_password !== confirm_password) {
+      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Confirm Password and New Password not match.');
+    }
+
+    // Hash the new password
+    const hashedPassword = await hashPassword(new_password);
+
+    // Update user's password in the database
+    user.password = hashedPassword;
+    await user.save();
+
+    return {
+      email: user.email,
+      id: user.id,
+    };
+  } catch (error) {
+    throw error; 
+  }
+}
+
+/**
  * Update existing user
  * @param {string} id - User ID
  * @param {string} name - Name
@@ -127,6 +170,7 @@ module.exports = {
   getUsers,
   getUser,
   createUser,
+  changePassword,
   updateUser,
   deleteUser,
   emailExist,

@@ -21,6 +21,14 @@ module.exports = (app) => {
     usersControllers.createUser
   );
 
+  //Change Password
+  route.patch(
+    '/:id/change-password',
+    authenticationMiddleware,
+    celebrate(usersValidator.changePassword),
+    usersControllers.changePassword
+  );
+
   // Get user detail
   route.get('/:id', authenticationMiddleware, usersControllers.getUser);
 

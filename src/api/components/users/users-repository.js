@@ -34,6 +34,39 @@ async function createUser(name, email, password) {
 }
 
 /**
+ * Check if new password matches the stored password hash.
+ * @param {string} new_password - The password to check.
+ * @param {string} hashedPassword - The hashed password stored in the database.
+ * @returns {boolean} 
+ */
+async function passwordMatched(password, hashedPassword) {
+  const bcrypt = require('bcrypt');
+  return await bcrypt.compare(password, hashedPassword);
+}
+
+
+/** Change password
+ * @param {string} id - ID
+ * @param {string} new_password - New password
+ * @return {Promise}
+ */
+async function changePassword(id,new_password){
+  try {
+    const user = await User.findByIdAndUpdate(id, { password: new_password });
+
+    if (user) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+
+/**
  * Update existing user
  * @param {string} id - User ID
  * @param {string} name - Name
@@ -77,6 +110,8 @@ module.exports = {
   getUsers,
   getUser,
   createUser,
+  passwordMatched,
+  changePassword,
   updateUser,
   deleteUser,
   isEmailExist,
